@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import uuid
 from pathlib import Path
 
 import pytest
@@ -53,7 +54,8 @@ def test_source_type_unknown():
 
 def test_idempotent_registration(pool, tmp_path):
     """Registering the same file twice returns the same document_id."""
-    content = "unique idempotency test content 42"
+    # UUID suffix guarantees a fresh hash each run — no cross-run contamination
+    content = f"unique idempotency test content {uuid.uuid4()}"
     f = tmp_path / "idem.txt"
     f.write_text(content, encoding="utf-8")
 

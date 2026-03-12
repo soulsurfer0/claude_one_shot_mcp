@@ -1,8 +1,7 @@
 """Shared pytest fixtures for the MCP RAG Server test suite."""
 from __future__ import annotations
 
-import os
-import tempfile
+import uuid
 from pathlib import Path
 
 import pytest
@@ -31,8 +30,13 @@ def embedder():
 
 @pytest.fixture
 def tmp_txt_file(tmp_path):
-    """A temporary .txt file with enough content to produce multiple chunks."""
-    content = "The quick brown fox jumps over the lazy dog. " * 100
+    """A temporary .txt file with enough content to produce multiple chunks.
+
+    Content includes a UUID so each test invocation gets a unique SHA256 hash,
+    preventing state contamination from previous test runs sharing the same DB.
+    """
+    run_id = uuid.uuid4()
+    content = f"The quick brown fox jumps over the lazy dog. " * 100 + f"\nrun_id={run_id}"
     f = tmp_path / "test_doc.txt"
     f.write_text(content, encoding="utf-8")
     return f
