@@ -123,28 +123,57 @@ for r in results:
 
 ## MCP Server Usage
 
-### Starting the server
+### ⚠️ There is no localhost port
 
-```bash
-python src/server.py
-```
+`python src/server.py` does **not** start an HTTP server and does **not** listen on any port.
+The server uses **stdio transport** — it reads JSON-RPC from stdin and writes responses to stdout.
+You cannot open it in a browser or call it with curl. You interact with it through an MCP client.
 
-The server communicates over stdio using the MCP protocol.
+### Option 1 — Claude Desktop (recommended)
 
-### Claude Desktop configuration
+Claude Desktop (`claude_desktop_config.json`) launches the server as a subprocess and handles
+the stdio pipe automatically. The tools appear inside Claude's UI.
 
-Add to your `claude_desktop_config.json`:
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
     "rag-server": {
-      "command": "python",
-      "args": ["path/to/claude_one_shot_mcp/src/server.py"],
-      "cwd": "path/to/claude_one_shot_mcp"
+      "command": "C:\\path\\to\\claude_one_shot_mcp\\.venv\\Scripts\\python.exe",
+      "args": ["C:\\path\\to\\claude_one_shot_mcp\\src\\server.py"]
     }
   }
 }
+```
+
+Restart Claude Desktop after saving. The three tools will appear in the tools panel.
+
+### Option 2 — MCP Inspector (browser UI for testing)
+
+```bash
+.venv\Scripts\python -m mcp dev src/server.py
+```
+
+This starts a local web UI (typically at `http://localhost:5173`) that lets you call tools interactively.
+
+### Option 3 — Python API (no server process needed)
+
+For scripting or integration, use the backend directly — no server process required:
+
+```python
+from dotenv import load_dotenv
+load_dotenv()
+from src.db.connection import get_pool
+from src.embeddings.embedder import get_default_embedder
+from src.rag_backend import RAGBackend
+
+backend = RAGBackend(get_pool(), get_default_embedder())
+backend.ingest_document("path/to/document.txt")
+results = backend.retrieve("my query", top_k=5)
+for r in results:
+    print(r["source_name"], round(r["similarity"], 3), r["content"][:80])
 ```
 
 ### Available MCP Tools
