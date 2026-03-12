@@ -21,6 +21,7 @@ _CHUNK_SIZE = 65536  # 64 KiB reads for hashing
 _SOURCE_TYPES: dict[str, str] = {
     ".txt": "text/plain",
     ".md":  "text/markdown",
+    ".pdf": "application/pdf",
 }
 
 

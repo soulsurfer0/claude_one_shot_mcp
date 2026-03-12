@@ -125,6 +125,32 @@ def persist_chunks(
     return chunk_ids
 
 
+def extract_text(path: Path) -> str:
+    """
+    Extract plain text from a file.
+
+    Supports .txt, .md (UTF-8 read) and .pdf (via PyMuPDF).
+    Raises ValueError for unsupported extensions.
+    """
+    suffix = path.suffix.lower()
+    if suffix in (".txt", ".md"):
+        return path.read_text(encoding="utf-8", errors="replace")
+    if suffix == ".pdf":
+        try:
+            import fitz  # PyMuPDF
+        except ImportError:
+            raise ImportError(
+                "PyMuPDF is required for PDF ingestion: pip install pymupdf"
+            )
+        doc = fitz.open(str(path))
+        pages = [page.get_text() for page in doc]
+        doc.close()
+        return "\n".join(pages)
+    raise ValueError(
+        f"Unsupported file type '{suffix}'. Supported: .txt, .md, .pdf"
+    )
+
+
 def ingest_text_document(
     pool: ConnectionPool,
     file_path: str | Path,
@@ -132,16 +158,16 @@ def ingest_text_document(
     metadata: dict[str, Any] | None = None,
 ) -> dict:
     """
-    End-to-end ingestion of a .txt or .md document.
+    End-to-end ingestion of a .txt, .md, or .pdf document.
 
-    Registers the document, reads its text, chunks it, and persists chunks.
+    Registers the document, extracts its text, chunks it, and persists chunks.
 
     Returns:
         dict with document_id, chunk_ids, is_new.
     """
     path = Path(file_path).resolve()
     document_id, is_new = register_document(pool, path, source_name, metadata)
-    text = path.read_text(encoding="utf-8")
+    text = extract_text(path)
     chunks = chunk_text(text)
     chunk_ids = persist_chunks(pool, document_id, chunks)
     return {

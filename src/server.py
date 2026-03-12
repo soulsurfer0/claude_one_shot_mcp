@@ -52,10 +52,10 @@ def ingest_document(
     metadata: dict = {},
 ) -> dict:
     """
-    Ingest a plain-text (.txt or .md) document into the RAG system.
+    Ingest a document (.txt, .md, or .pdf) into the RAG system.
 
     Args:
-        file_path: Absolute or relative path to the document.
+        file_path: Absolute Windows path to the document, e.g. D:\\Projects\\docs\\file.pdf
         source_name: Optional human-readable label for the document.
         metadata: Optional arbitrary JSON metadata to attach.
 

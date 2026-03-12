@@ -48,8 +48,12 @@ def test_source_type_md():
     assert infer_source_type(Path("file.md")) == "text/markdown"
 
 
+def test_source_type_pdf():
+    assert infer_source_type(Path("file.pdf")) == "application/pdf"
+
+
 def test_source_type_unknown():
-    assert infer_source_type(Path("file.pdf")) == "application/octet-stream"
+    assert infer_source_type(Path("file.docx")) == "application/octet-stream"
 
 
 def test_idempotent_registration(pool, tmp_path):
