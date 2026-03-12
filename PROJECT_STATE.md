@@ -19,14 +19,14 @@ The MCP RAG Server has been fully implemented, tested, and verified.
 | Retrieval | ✅ Cosine similarity top-k |
 | RAG backend facade | ✅ ingest_document + retrieve + health |
 | MCP server | ✅ stdio, 3 tools, FastMCP |
-| Test suite | ✅ 45/45 tests passing |
+| Test suite | ✅ 46/46 tests passing |
 | Smoke tests | ✅ 3 docs ingested, all 3 queries retrieve correct doc |
 | Documentation | ✅ README, ARCHITECTURE, PROJECT_STATE, CURRENT_TASK |
 
 ## Test Results
 
 ```
-45 passed in ~20s
+46 passed in ~29s
 ```
 
 ## Smoke Test Results

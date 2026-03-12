@@ -94,7 +94,7 @@ python scripts/init_db.py
 python -m pytest tests/ -v
 ```
 
-All 45 tests should pass.
+All 46 tests should pass.
 
 ## Ingesting a Document
 
@@ -180,7 +180,7 @@ for r in results:
 
 | Tool | Description |
 |------|-------------|
-| `ingest_document` | Ingest a .txt or .md file into the RAG system |
+| `ingest_document` | Ingest a .txt, .md, or .pdf file into the RAG system |
 | `retrieve_chunks` | Semantic search: retrieve top-k relevant chunks for a query |
 | `health_check` | Report DB connectivity and embedding model status |
 
