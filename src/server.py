@@ -34,18 +34,14 @@ from src.rag_backend import RAGBackend
 
 mcp = FastMCP("rag-server")
 
-# Lazy-initialise backend on first tool call
-_backend: RAGBackend | None = None
+# Eagerly initialise at module load so the embedding model is ready
+# before the first MCP tool call arrives (avoids client-side timeouts).
+logger.info("Initialising RAG backend ...")
+_backend = RAGBackend(pool=get_pool(), embedder=get_default_embedder())
+logger.info("RAG backend ready.")
 
 
 def _get_backend() -> RAGBackend:
-    global _backend
-    if _backend is None:
-        logger.info("Initialising RAG backend ...")
-        pool = get_pool()
-        embedder = get_default_embedder()
-        _backend = RAGBackend(pool=pool, embedder=embedder)
-        logger.info("RAG backend ready.")
     return _backend
 
 
